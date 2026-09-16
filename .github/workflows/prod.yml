@@ -12,9 +12,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
-	
+        uses: actions/checkout@v6
+
       - name: SonarQube Scan
+        working-directory: innerpeace-app
 	      uses: SonarSource/sonarqube-scan-action@v6
       	env:
       	 SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
