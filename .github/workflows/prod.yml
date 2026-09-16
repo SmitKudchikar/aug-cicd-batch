@@ -15,8 +15,9 @@ jobs:
         uses: actions/checkout@v6
 
       - name: SonarQube Scan
-        working-directory: innerpeace-app
-	      uses: SonarSource/sonarqube-scan-action@v6
+	    uses: SonarSource/sonarqube-scan-action@v6
+		with:
+			projectBaseDir: innerpeace-app
       	env:
       	 SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
       	 SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
