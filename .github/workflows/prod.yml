@@ -13,13 +13,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
+        
       - name: SonarQube Scan
-	    uses: SonarSource/sonarqube-scan-action@v6
-		with:
-			projectBaseDir: innerpeace-app
-      	env:
-      	 SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
-      	 SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
+        uses: SonarSource/sonarqube-scan-action@v6
+        with:
+          projectBaseDir: innerpeace-app
+        env:
+         SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+         SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
 
 
       # withought docker CI pipeline Start
@@ -77,4 +78,3 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}
-
