@@ -13,7 +13,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
-		
       - name: SonarQube Scan
 	    uses: SonarSource/sonarqube-scan-action@v6
 		with:
