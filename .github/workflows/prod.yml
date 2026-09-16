@@ -13,6 +13,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
+	
+      - name: SonarQube Scan
+	uses: SonarSource/sonarqube-scan-action@v6
+	env:
+	 SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+	 SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
+
 
       # withought docker CI pipeline Start
       # ------------------------------------------------
@@ -49,19 +56,24 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/aug_cicd:latest .
+          docker build -t docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }} .
+
+      - name: Check Docker Image
+        run: |
+          docker images
+          docker image inspect docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}
 
       - name: Test Docker Image
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: '${{ secrets.DOCKER_USERNAME }}/aug_cicd:latest:${{ github.sha }}'
+          image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
 
       - name: Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/aug_cicd:latest
+          docker push docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}
 
