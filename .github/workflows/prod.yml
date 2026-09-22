@@ -7,18 +7,20 @@ on:
 
 
 jobs:
-  build:
+  ci-build-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
-	
+        uses: actions/checkout@v6
+        
       - name: SonarQube Scan
-	      uses: SonarSource/sonarqube-scan-action@v6
-      	env:
-      	 SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
-      	 SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
+        uses: SonarSource/sonarqube-scan-action@v6
+        with:
+          projectBaseDir: innerpeace-app
+        env:
+         SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+         SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
 
 
       # withought docker CI pipeline Start
@@ -48,6 +50,7 @@ jobs:
       # -------------------------------------
       # withought docker CI pipeline End
 
+
       - name: Login to Docker Hub
         uses: docker/login-action@v4
         with:
@@ -76,4 +79,26 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}
+
+# Now we are starting a CD Process -----------------------------------------------------------
+  cd-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_KEY }}
+          script: |
+            
+            docker run -d --name aug-cicd -p 80:80 docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}
 
