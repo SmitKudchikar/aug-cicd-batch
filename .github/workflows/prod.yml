@@ -102,5 +102,5 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
 
-            docker run -d --name aug-cicd -p 8080:80 docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}
+            docker run -d -p 8080:80 docker.io/${{ secrets.DOCKER_USERNAME }}/aug-cicd:${{ github.sha }}
 
