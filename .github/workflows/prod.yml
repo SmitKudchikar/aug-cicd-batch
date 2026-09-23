@@ -83,6 +83,7 @@ jobs:
 # Now we are starting a CD Process -----------------------------------------------------------
   
   cd-deploy:
+    needs: ci-build-test 
     runs-on: ubuntu-latest
 
     steps:
