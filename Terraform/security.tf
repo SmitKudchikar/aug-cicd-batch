@@ -1,4 +1,4 @@
-resource "aws_security_group" "allow_tls" {
+resource "aws_security_group" "terraform_sg" {
   name        = "Terraform-ec2-sg"
   description = "Security Group for EC2 from Terraform side"
 
@@ -22,10 +22,10 @@ resource "aws_security_group" "allow_tls" {
     protocol    = "tcp"
   }
 
-  egress{
-    from_port  = 0
-    to_port    = 0
-    protocol   = "-1"
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
 
     cidr_blocks = ["0.0.0.0/0"]
   }
